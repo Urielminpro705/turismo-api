@@ -11,15 +11,6 @@ class usersServices {
                     data: data
                 }
             })
-            .catch(err => {
-                console.log(err);
-                return {
-                    succeded: false,
-                    statusCode: 500,
-                    message: "Error interno del servidor",
-                    data: []
-                }
-            });
     }
 
     async getUserById (id) {
@@ -33,23 +24,14 @@ class usersServices {
                         data: user
                     }
                 } else {
-                    return {
-                        succeded: false,
-                        statusCode: 404,
-                        message: "No se encontro el usuario",
-                        data: {}
-                    }
+                    const err = new Error("No se encontro el usuario");
+                    err.statusCode = 404;
+                    err.data = {};
+                    err.customed = true;
+
+                    throw err;
                 }
             })
-            .catch(err => {
-                console.log(err);
-                return {
-                    succeded: false,
-                    statusCode: 500,
-                    message: "Error interno del servidor",
-                    data: {}
-                }
-            });
     }
 
     createUser (body) {
@@ -62,12 +44,12 @@ class usersServices {
         if (!password) missingFields.push("password");
 
         if (missingFields.length > 0) {
-            return {
-                succeded: false,
-                statusCode: 400,
-                message: `Missing required fields: ${missingFields.join(", ")}`,
-                data: {}
-            } 
+            const err = new Error(`Missing required fields: ${missingFields.join(", ")}`);
+            err.statusCode = 400;
+            err.data = {};
+            err.customed = true;
+
+            throw err;
         }
 
         const newUser = {
@@ -85,15 +67,6 @@ class usersServices {
                     data: data
                 }
             })
-            .catch(err => {
-                console.log(err);
-                return {
-                    succeded: false,
-                    statusCode: 500,
-                    message: "Error interno del servidor",
-                    data: {}
-                }
-            });
     }
 
     updateUser (id, newData) {
@@ -112,12 +85,12 @@ class usersServices {
                 console.log(data.matchedCount);
                 console.log(data.modifiedCount);
                 if (data.matchedCount === 0) {
-                    return {
-                        succeded: false,
-                        statusCode: 404,
-                        message: 'No se encontro el usuario',
-                        data: {}
-                    }
+                    const err = new Error("No se encontro el usuario");
+                    err.statusCode = 404;
+                    err.data = {};
+                    err.customed = true;
+
+                    throw err;
                 }
 
                 const mensaje = data.modifiedCount > 0 ? 'Actualizado' : 'No se actualizo nada';
@@ -129,15 +102,6 @@ class usersServices {
                     data: user
                 }
             })
-            .catch(err => {
-                console.log(err);
-                return {
-                    succeded: false,
-                    statusCode: 500,
-                    message: "Error interno del servidor",
-                    data: {}
-                }
-            });
     }
 
     deleteUser (id) {
@@ -151,23 +115,14 @@ class usersServices {
                         data: {id}
                     }
                 } else {
-                    return {
-                        succeded: false,
-                        statusCode: 404,
-                        message: 'User Not Found',
-                        data: {}
-                    }
+                    const err = new Error("No se encontro el usuario");
+                    err.statusCode = 404;
+                    err.data = {};
+                    err.customed = true;
+
+                    throw err;
                 }
             })
-            .catch(err => {
-                console.log(err);
-                return {
-                    succeded: false,
-                    statusCode: 500,
-                    message: "Error interno del servidor",
-                    data: {}
-                }
-            });
     }
 }
 

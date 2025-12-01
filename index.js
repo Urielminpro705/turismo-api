@@ -4,6 +4,7 @@ const setupSwagger = require("./swagger");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
+const { logErrors, errorHandler } = require("./middlewares/errorHandler");
 
 const app = express();
 const port = 3000;
@@ -18,6 +19,10 @@ app.get("/", (req, res) => {
 });
 
 routerApi(app);
+
+// Manejo de errores
+app.use(logErrors);
+app.use(errorHandler);
 
 mongoose.connect(process.env.MONGO_CONNECTION)
     .then(() => console.log("Conexion a Mongo DB exitosa"))

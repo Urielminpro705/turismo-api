@@ -35,13 +35,18 @@ const service = new usersServices();
  *                                          password:
  *                                              type: string
  */
-router.get("/", async (req, res) => {
-    const response = await service.getAllUsers();
+router.get("/", async (req, res, next) => {
+    try {
+        const response = await service.getAllUsers();
 
-    res.status(response.statusCode).json({
-        message: response.message,
-        data: response.data
-    })
+        res.status(response.statusCode).json({
+            message: response.message,
+            data: response.data
+        })
+    } catch (err) {
+        next(err);
+    }
+
 });
 
 /**
@@ -92,14 +97,18 @@ router.get("/", async (req, res) => {
  *                                  type: object
  *                                  example: {}
  */
-router.get("/:id", async (req, res) => {
+router.get("/:id", async (req, res, next) => {
     const { id } = req.params;
-    const response = await service.getUserById(id);
-    
-    res.status(response.statusCode).json({
-        message: response.message,
-        data: response.data
-    })
+    try {
+        const response = await service.getUserById(id);
+
+        res.status(response.statusCode).json({
+            message: response.message,
+            data: response.data
+        });
+    } catch (err) {
+        next(err);
+    }    
 });
 
 /**
@@ -156,13 +165,17 @@ router.get("/:id", async (req, res) => {
  *                                  type: object
  *                                  example: {}                            
  */
-router.post("/", async (req, res) => {
-    const response = await service.createUser(req.body);
-
-    res.status(response.statusCode).json({
-        message: response.message,
-        data: response.data
-    })
+router.post("/", async (req, res, next) => {
+    try {
+        const response = await service.createUser(req.body);
+    
+        res.status(response.statusCode).json({
+            message: response.message,
+            data: response.data
+        });
+    } catch (err) {
+        next(err);
+    }
 });
 
 /**
@@ -226,14 +239,19 @@ router.post("/", async (req, res) => {
  *                                  type: object
  *                                  example: {}
  */
-router.patch("/:id", async (req, res) => {
+router.patch("/:id", async (req, res, next) => {
     const { id } = req.params;
-    const response = await service.updateUser(id, req.body);
-    
-    res.status(response.statusCode).json({
-        message: response.message,
-        data: response.data
-    })
+
+    try {
+        const response = await service.updateUser(id, req.body);
+        
+        res.status(response.statusCode).json({
+            message: response.message,
+            data: response.data
+        });
+    } catch (err) {
+        next(err);
+    }
 });
 
 /**
@@ -278,14 +296,18 @@ router.patch("/:id", async (req, res) => {
  *                                  type: object
  *                                  example: {}        
  */
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", async (req, res, next) => {
     const { id } = req.params;
-    const response = await service.deleteUser(id);
-
-    res.status(response.statusCode).json({
-        message: response.message,
-        data: response.data
-    })
+    try {
+        const response = await service.deleteUser(id);
+    
+        res.status(response.statusCode).json({
+            message: response.message,
+            data: response.data
+        });
+    } catch (err) {
+        next(err);
+    }
 });
 
 module.exports = router;
