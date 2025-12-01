@@ -19,6 +19,10 @@ app.get("/", (req, res) => {
 
 routerApi(app);
 
+mongoose.connect(process.env.MONGO_CONNECTION)
+    .then(() => console.log("Conexion a Mongo DB exitosa"))
+    .catch(err => console.log("No salio UWU", err));
+
 app.listen(port, () => {
     console.log(`El servidor esta escuchando en: http://localhost:${port}`);
 });
