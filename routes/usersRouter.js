@@ -42,7 +42,7 @@ router.get("/", async (req, res, next) => {
         res.status(response.statusCode).json({
             message: response.message,
             data: response.data
-        })
+        });
     } catch (err) {
         next(err);
     }
@@ -169,6 +169,95 @@ router.post("/", async (req, res, next) => {
     try {
         const response = await service.createUser(req.body);
     
+        res.status(response.statusCode).json({
+            message: response.message,
+            data: response.data
+        });
+    } catch (err) {
+        next(err);
+    }
+});
+
+/**
+ * @swagger
+ * /users/login:
+ *  post:
+ *      summary: Comprobar credenciales de un usuario
+ *      tags:
+ *          -   Users
+ *      requestBody:
+ *          required: true
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      type: object
+ *                      properties:
+ *                          username:
+ *                              type: string
+ *                          password:
+ *                              type: string
+ *      responses:
+ *          200:
+ *              description: Se inicio sesion
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: object
+ *                          properties:
+ *                              message:
+ *                                  type: string
+ *                              data:
+ *                                  type: object
+ *                                  properties:
+ *                                      id: 
+ *                                          type: string
+ *                                      name:
+ *                                          type: string   
+ *                                      username:
+ *                                          type: string
+ *                                      password:
+ *                                          type: string
+ *          400:
+ *              description: Faltan atributos
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: object
+ *                          properties:
+ *                              message:
+ *                                  type: string
+ *                              data:
+ *                                  type: object
+ *                                  example: {}                            
+ *          401:
+ *              description: Contraseña incorrecta
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: object
+ *                          properties:
+ *                              message:
+ *                                  type: string
+ *                              data:
+ *                                  type: object
+ *                                  example: {}                            
+ *          404:
+ *              description: No se encontró el usuario
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: object
+ *                          properties:
+ *                              message:
+ *                                  type: string
+ *                              data:
+ *                                  type: object
+ *                                  example: {}                            
+ */
+router.post("/login", async (req, res, next) => {
+    try {
+        const response = await service.login(req.body);
+
         res.status(response.statusCode).json({
             message: response.message,
             data: response.data
