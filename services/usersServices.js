@@ -78,7 +78,7 @@ class usersServices {
             })
     }
 
-    updateUser (id, newData) {
+    async updateUser (id, newData) {
         const { name, username, password } = newData;
         const user = {}
 
@@ -91,8 +91,6 @@ class usersServices {
             { $set: user }
         )
             .then(data => {
-                console.log(data.matchedCount);
-                console.log(data.modifiedCount);
                 if (data.matchedCount === 0) {
                     const err = new Error("No se encontro el usuario");
                     err.statusCode = 404;
@@ -113,7 +111,7 @@ class usersServices {
             })
     }
 
-    deleteUser (id) {
+    async deleteUser (id) {
         return User.deleteOne({ _id: id })
             .then(data => {
                 if (data.deletedCount > 0) {
