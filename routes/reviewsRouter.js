@@ -36,7 +36,7 @@ const service = new reviewsServices();
  *                                              type: number
  *                                          date:
  *                                              type: string
- *                                              format: date
+ *                                              format: date-time
  */
 router.get("/", async (req, res, next) => {
     try {
@@ -88,7 +88,7 @@ router.get("/", async (req, res, next) => {
  *                                          type: number
  *                                      date:
  *                                          type: string
- *                                          format: date
+ *                                          format: date-time
  *          404:
  *              description: No se encontro una reseña con ese id
  *              content:
@@ -161,7 +161,7 @@ router.get("/:id", async (req, res, next) => {
  *                                          type: number
  *                                      date:
  *                                          type: string
- *                                          format: date
+ *                                          format: date-time
  *          400:
  *              description: Faltan atributos
  *              content:
@@ -264,7 +264,7 @@ router.post("/", async (req, res, next) => {
  *                                          type: number
  *                                      date:
  *                                          type: string
- *                                          format: date
+ *                                          format: date-time
  *          404:
  *              description: No se encontro la reseña, usuario o lugar
  *              content:
