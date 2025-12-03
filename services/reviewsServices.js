@@ -197,7 +197,7 @@ class reviewsServices {
     }
 
     async userHasReviewsForThisPlace(userId, placeId) {
-        const reviews = Review.find({ userId, placeId });
+        const reviews = await Review.find({ userId, placeId });
         return reviews.length > 0 ? true : false;
     }
 }
