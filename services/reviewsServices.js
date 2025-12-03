@@ -131,7 +131,7 @@ class reviewsServices {
             review.placeId = placeId
         };
 
-        if (await this.userHasReviewsForThisPlace(userId, placeId)) {
+        if (await this.userHasReviewsForThisPlace(userId, placeId, id)) {
             const err = new Error("El usuario ya dio una reseña a este lugar");
             err.statusCode = 409;
             err.data = {};
@@ -196,9 +196,15 @@ class reviewsServices {
         return place ? true : false;
     }
 
-    async userHasReviewsForThisPlace(userId, placeId) {
-        const reviews = await Review.find({ userId, placeId });
-        return reviews.length > 0 ? true : false;
+    async userHasReviewsForThisPlace(userId, placeId, excludeReviewId = null) {
+        const filter = { userId, placeId };
+        
+        if (excludeReviewId) {
+            filter._id = { $ne: excludeReviewId };
+        }
+
+        const reviews = await Review.find(filter);
+        return reviews.length > 0;
     }
 }
 
