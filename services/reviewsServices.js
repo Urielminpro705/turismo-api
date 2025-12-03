@@ -71,7 +71,7 @@ class reviewsServices {
             throw err;
         }
 
-        if (this.userHasReviewsForThisPlace(userId, placeId)) {
+        if (await this.userHasReviewsForThisPlace(userId, placeId)) {
             const err = new Error("El usuario ya dio una reseña a este lugar");
             err.statusCode = 409;
             err.data = {};
@@ -131,7 +131,7 @@ class reviewsServices {
             review.placeId = placeId
         };
 
-        if (this.userHasReviewsForThisPlace(userId, placeId)) {
+        if (await this.userHasReviewsForThisPlace(userId, placeId)) {
             const err = new Error("El usuario ya dio una reseña a este lugar");
             err.statusCode = 409;
             err.data = {};
