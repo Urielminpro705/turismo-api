@@ -42,8 +42,8 @@ class placesServices {
         if (!name) missingFields.push("name");
         if (!description) missingFields.push("description");
         if (!image) missingFields.push("image");
-        if (!latitude) missingFields.push("latitude");
-        if (!longitude) missingFields.push("longitude");
+        if (latitude === undefined) missingFields.push("latitude");
+        if (longitude === undefined) missingFields.push("longitude");
 
         if (missingFields.length > 0) {
             const err = new Error(`Faltan estos campos necesarios: ${missingFields.join(", ")}`);

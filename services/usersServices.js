@@ -1,4 +1,5 @@
 const User = require("../models/User");
+const Review = require("../models/Review");
 
 class usersServices {
     getAllUsers () {
@@ -113,8 +114,10 @@ class usersServices {
 
     async deleteUser (id) {
         return User.deleteOne({ _id: id })
-            .then(data => {
+            .then(async data => {
                 if (data.deletedCount > 0) {
+                    await this.deleteReviews(id);
+                    
                     return {
                         succeded: true,
                         statusCode: 200,
@@ -178,6 +181,10 @@ class usersServices {
     async doesUserExist (username) {
         const user = await User.findOne({ username });
         return user ? true : false;
+    }
+
+    async deleteReviews(userId) {
+        const reviews = await Review.deleteMany({ userId });
     }
 }
 

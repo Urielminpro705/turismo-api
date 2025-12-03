@@ -1,19 +1,19 @@
 const express = require("express");
-const usersServices = require("../services/usersServices");
+const reviewsServices = require("../services/reviewsServices");
 
 const router = express.Router();
-const service = new usersServices();
+const service = new reviewsServices();
 
 /**
  * @swagger
- * /users:
+ * /reviews:
  *  get:
- *      summary: Obtiene una lista de usuarios
+ *      summary: Obtiene una lista de reseñas
  *      tags:
- *          -   Users
+ *          -   Reviews
  *      responses:
  *          200:
- *              description: Lista de usuarios
+ *              description: Lista de reseñas
  *              content:
  *                  application/json:
  *                      schema:
@@ -26,18 +26,21 @@ const service = new usersServices();
  *                                  items:
  *                                      type: object
  *                                      properties:
- *                                          id:
+ *                                          userId:
  *                                              type: string
- *                                          name:
+ *                                          placeId:
  *                                              type: string
- *                                          username:
+ *                                          comment:
  *                                              type: string
- *                                          password:
+ *                                          rating:
+ *                                              type: number
+ *                                          date:
  *                                              type: string
+ *                                              format: date
  */
 router.get("/", async (req, res, next) => {
     try {
-        const response = await service.getAllUsers();
+        const response = await service.getAllReviews();
 
         res.status(response.statusCode).json({
             message: response.message,
@@ -50,21 +53,21 @@ router.get("/", async (req, res, next) => {
 
 /**
  * @swagger
- * /users/{id}:
+ * /reviews/{id}:
  *  get:
- *      summary: Obtiene un usuario por id
+ *      summary: Obtiene una reseña por id
  *      tags:
- *          -   Users
+ *          -   Reviews
  *      parameters:
  *          -   in: path
  *              name: id
  *              required: true
- *              description: ID del usuario
+ *              description: ID de la reseña
  *              schema:
  *                  type: string
  *      responses:
  *          200:
- *              description: Usuario por id
+ *              description: Reseña por id
  *              content:
  *                  application/json:
  *                      schema:
@@ -75,16 +78,19 @@ router.get("/", async (req, res, next) => {
  *                              data:
  *                                  type: object
  *                                  properties:
- *                                      id:
+ *                                      userId:
  *                                          type: string
- *                                      name:
+ *                                      placeId:
  *                                          type: string
- *                                      username:
+ *                                      comment:
  *                                          type: string
- *                                      password:
+ *                                      rating:
+ *                                          type: number
+ *                                      date:
  *                                          type: string
+ *                                          format: date
  *          404:
- *              description: No se encontro un usuario con ese id
+ *              description: No se encontro una reseña con ese id
  *              content:
  *                  application/json:
  *                      schema:
@@ -99,7 +105,7 @@ router.get("/", async (req, res, next) => {
 router.get("/:id", async (req, res, next) => {
     const { id } = req.params;
     try {
-        const response = await service.getUserById(id);
+        const response = await service.getReviewById(id);
 
         res.status(response.statusCode).json({
             message: response.message,
@@ -112,11 +118,11 @@ router.get("/:id", async (req, res, next) => {
 
 /**
  * @swagger
- * /users:
+ * /reviews:
  *  post:
- *      summary: Crear un nuevo usuario
+ *      summary: Crear una nueva reseña
  *      tags:
- *          -   Users
+ *          -   Reviews
  *      requestBody:
  *          required: true
  *          content:
@@ -124,15 +130,17 @@ router.get("/:id", async (req, res, next) => {
  *                  schema:
  *                      type: object
  *                      properties:
- *                          name:
+ *                          userId:
  *                              type: string
- *                          username:
+ *                          placeId:
  *                              type: string
- *                          password:
+ *                          comment:
  *                              type: string
+ *                          rating:
+ *                              type: number
  *      responses:
  *          201:
- *              description: Se creo el usuario
+ *              description: Se creo la reseña
  *              content:
  *                  application/json:
  *                      schema:
@@ -143,14 +151,17 @@ router.get("/:id", async (req, res, next) => {
  *                              data:
  *                                  type: object
  *                                  properties:
- *                                      id: 
+ *                                      userId:
  *                                          type: string
- *                                      name:
- *                                          type: string   
- *                                      username:
+ *                                      placeId:
  *                                          type: string
- *                                      password:
+ *                                      comment:
  *                                          type: string
+ *                                      rating:
+ *                                          type: number
+ *                                      date:
+ *                                          type: string
+ *                                          format: date
  *          400:
  *              description: Faltan atributos
  *              content:
@@ -163,8 +174,20 @@ router.get("/:id", async (req, res, next) => {
  *                              data:
  *                                  type: object
  *                                  example: {}                            
+ *          404:
+ *              description: El usuario y/o el lugar no existen
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: object
+ *                          properties:
+ *                              message:
+ *                                  type: string
+ *                              data:
+ *                                  type: object
+ *                                  example: {}                            
  *          409:
- *              description: El username ya esta ocupado
+ *              description: El usuario ya dio una reseña a este lugar
  *              content:
  *                  application/json:
  *                      schema:
@@ -178,7 +201,7 @@ router.get("/:id", async (req, res, next) => {
  */
 router.post("/", async (req, res, next) => {
     try {
-        const response = await service.createUser(req.body);
+        const response = await service.createReview(req.body);
     
         res.status(response.statusCode).json({
             message: response.message,
@@ -191,105 +214,16 @@ router.post("/", async (req, res, next) => {
 
 /**
  * @swagger
- * /users/login:
- *  post:
- *      summary: Comprobar credenciales de un usuario
- *      tags:
- *          -   Users
- *      requestBody:
- *          required: true
- *          content:
- *              application/json:
- *                  schema:
- *                      type: object
- *                      properties:
- *                          username:
- *                              type: string
- *                          password:
- *                              type: string
- *      responses:
- *          200:
- *              description: Se inicio sesion
- *              content:
- *                  application/json:
- *                      schema:
- *                          type: object
- *                          properties:
- *                              message:
- *                                  type: string
- *                              data:
- *                                  type: object
- *                                  properties:
- *                                      id: 
- *                                          type: string
- *                                      name:
- *                                          type: string   
- *                                      username:
- *                                          type: string
- *                                      password:
- *                                          type: string
- *          400:
- *              description: Faltan atributos
- *              content:
- *                  application/json:
- *                      schema:
- *                          type: object
- *                          properties:
- *                              message:
- *                                  type: string
- *                              data:
- *                                  type: object
- *                                  example: {}                            
- *          401:
- *              description: Contraseña incorrecta
- *              content:
- *                  application/json:
- *                      schema:
- *                          type: object
- *                          properties:
- *                              message:
- *                                  type: string
- *                              data:
- *                                  type: object
- *                                  example: {}                            
- *          404:
- *              description: No se encontró el usuario
- *              content:
- *                  application/json:
- *                      schema:
- *                          type: object
- *                          properties:
- *                              message:
- *                                  type: string
- *                              data:
- *                                  type: object
- *                                  example: {}                            
- */
-router.post("/login", async (req, res, next) => {
-    try {
-        const response = await service.login(req.body);
-
-        res.status(response.statusCode).json({
-            message: response.message,
-            data: response.data
-        });
-    } catch (err) {
-        next(err);
-    }
-});
-
-/**
- * @swagger
- * /users/{id}:
+ * /reviews/{id}:
  *  patch:
- *      summary: Actualizar valores de un usuario por ID
+ *      summary: Actualizar valores de una reseña por ID
  *      tags:
- *          -   Users
+ *          -   Reviews
  *      parameters:
  *          -   in: path
  *              name: id
  *              required: true
- *              description: Id del usuario
+ *              description: Id de la reseña
  *              schema:
  *                  type: string
  *      requestBody:
@@ -299,15 +233,17 @@ router.post("/login", async (req, res, next) => {
  *                  schema:
  *                      type: object
  *                      properties:
- *                          name:
+ *                          userId:
  *                              type: string
- *                          username:
+ *                          placeId:
  *                              type: string
- *                          password:
+ *                          comment:
  *                              type: string
+ *                          rating:
+ *                              type: number
  *      responses:
  *          200:
- *              description: Se actualizó el usuario
+ *              description: Se actualizó la reseña
  *              content:
  *                  application/json:
  *                      schema:
@@ -318,16 +254,19 @@ router.post("/login", async (req, res, next) => {
  *                              data:
  *                                  type: object
  *                                  properties:
- *                                      id:
+ *                                      userId:
  *                                          type: string
- *                                      name:
+ *                                      placeId:
  *                                          type: string
- *                                      username:
+ *                                      comment:
  *                                          type: string
- *                                      password:
+ *                                      rating:
+ *                                          type: number
+ *                                      date:
  *                                          type: string
+ *                                          format: date
  *          404:
- *              description: No se encontro el usuario
+ *              description: No se encontro la reseña, usuario o lugar
  *              content:
  *                  application/json:
  *                      schema:
@@ -339,7 +278,7 @@ router.post("/login", async (req, res, next) => {
  *                                  type: object
  *                                  example: {}
  *          409:
- *              description: El username ya esta ocupado
+ *              description: El usuario ya dio una reseña a este lugar
  *              content:
  *                  application/json:
  *                      schema:
@@ -355,7 +294,7 @@ router.patch("/:id", async (req, res, next) => {
     const { id } = req.params;
 
     try {
-        const response = await service.updateUser(id, req.body);
+        const response = await service.updateReview(id, req.body);
         
         res.status(response.statusCode).json({
             message: response.message,
@@ -368,21 +307,21 @@ router.patch("/:id", async (req, res, next) => {
 
 /**
  * @swagger
- * /users/{id}:
+ * /reviews/{id}:
  *  delete:
- *      summary: Eliminar un usuario por ID
+ *      summary: Eliminar una reseña por ID
  *      tags:
- *          -   Users
+ *          -   Reviews
  *      parameters:
  *          -   in: path
  *              name: id
  *              required: true
- *              description: Id del usuario
+ *              description: Id de la reseña
  *              schema:
  *                  type: string
  *      responses:
  *          200:
- *              description: Se eliminó el usuario
+ *              description: Se eliminó la reseña
  *              content:
  *                  application/json:
  *                      schema:
@@ -396,7 +335,7 @@ router.patch("/:id", async (req, res, next) => {
  *                                      id:
  *                                          type: string     
  *          404:
- *              description: No se encontro el usuario
+ *              description: No se encontro la reseña
  *              content:
  *                  application/json:
  *                      schema:
@@ -411,7 +350,7 @@ router.patch("/:id", async (req, res, next) => {
 router.delete("/:id", async (req, res, next) => {
     const { id } = req.params;
     try {
-        const response = await service.deleteUser(id);
+        const response = await service.deleteReview(id);
     
         res.status(response.statusCode).json({
             message: response.message,
